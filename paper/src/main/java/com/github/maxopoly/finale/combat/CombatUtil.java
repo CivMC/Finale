@@ -5,6 +5,7 @@ import com.github.maxopoly.finale.combat.event.CritHitEvent;
 import com.github.maxopoly.finale.misc.knockback.KnockbackConfig;
 import java.util.Iterator;
 import java.util.List;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
@@ -16,7 +17,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,19 +30,20 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_18_R2.util.CraftVector;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftVector;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.util.Vector;
 
 public class CombatUtil {
-	
+
 	 private static void sendSoundEffect(net.minecraft.world.entity.player.Player fromEntity, double x, double y, double z, SoundEvent soundEffect, SoundSource soundCategory, float volume, float pitch) {
         fromEntity.playSound(soundEffect, volume, pitch); // This will not send the effect to the entity himself
         if (fromEntity instanceof ServerPlayer) {
-            ((ServerPlayer) fromEntity).connection.send(new ClientboundSoundPacket(soundEffect, soundCategory, x, y, z, volume, pitch));
+        	Holder<SoundEvent> eventHolder = Holder.direct(soundEffect);
+            ((ServerPlayer) fromEntity).connection.send(new ClientboundSoundPacket(eventHolder, soundCategory, x, y, z, volume, pitch, 1));
         }
     }
 	 
@@ -132,7 +134,8 @@ public class CombatUtil {
 				}
 
 				Vec3 victimMot = victim.getDeltaMovement();
-				boolean damagedVictim = victim.hurt(DamageSource.playerAttack(attacker), damage);
+				DamageSources sources = attacker.damageSources();
+				boolean damagedVictim = victim.hurt(sources.playerAttack(attacker), damage);
 				if (damagedVictim) {
 					if (victim instanceof LivingEntity) {
 						LivingEntity livingVictim = (LivingEntity) victim;
@@ -205,8 +208,9 @@ public class CombatUtil {
 							LivingEntity entityliving = iterator.next();
 
 							if (entityliving != attacker && entityliving != victim && !attacker.skipAttackInteraction(entityliving) && (!(entityliving instanceof ArmorStand) || !((ArmorStand) entityliving).isMarker()) && attacker.distanceToSqr(entityliving) < 9.0D) {
+
 								// CraftBukkit start - Only apply knockback if the damage hits
-								if (entityliving.hurt(DamageSource.playerAttack(attacker).sweep(), f4)) {
+								if (entityliving.hurt(attacker.damageSources().playerAttack(attacker).sweep(), f4)) {
 									entityliving.knockback(0.4F, (double) Mth.sin(attacker.getBukkitYaw() * 0.017453292F), (double) (-Mth.cos(attacker.getBukkitYaw() * 0.017453292F)));
 								}
 								// CraftBukkit end
