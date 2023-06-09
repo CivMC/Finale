@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 import com.comphenix.protocol.wrappers.EnumWrappers.Hand;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerDigType;
@@ -44,7 +45,7 @@ public class AsyncPacketHandler extends PacketAdapter implements Listener {
 	private CombatConfig cc;
 	
 	public AsyncPacketHandler(CombatConfig cc) {
-		super(Finale.getPlugin(), ListenerPriority.HIGH, PacketType.Play.Client.USE_ENTITY, PacketType.Play.Client.ARM_ANIMATION, PacketType.Play.Client.BLOCK_DIG);
+		super(Finale.getPlugin(), ListenerPriority.HIGH, PacketType.Play.Client.USE_ENTITY, PacketType.Play.Client.ENTITY_ACTION, PacketType.Play.Client.ARM_ANIMATION, PacketType.Play.Client.BLOCK_DIG);
 
 		this.cc = cc;
 		
@@ -79,8 +80,8 @@ public class AsyncPacketHandler extends PacketAdapter implements Listener {
 					Damageable target = entity instanceof Damageable ? (Damageable) entity : null;
 
 					if (target == null || target.isDead() || target.isInvulnerable() ||
-							!world.getUID().equals(target.getWorld().getUID()) || !(target instanceof LivingEntity)) {
-						if (entity instanceof CraftEntity craftEntity){
+						!world.getUID().equals(target.getWorld().getUID()) || !(target instanceof LivingEntity)) {
+						if (entity instanceof CraftEntity craftEntity) {
 							craftEntity.getHandle().hurt(DamageSource.playerAttack(((CraftPlayer) attacker).getHandle()), (float) ((CraftPlayer) attacker).getHandle().getAttribute(Attributes.ATTACK_DAMAGE).getValue());
 						}
 						return;
@@ -94,7 +95,7 @@ public class AsyncPacketHandler extends PacketAdapter implements Listener {
 						return;
 					}
 
-					if (cpsHandler.getCPS(attacker.getUniqueId()) >= cc.getCPSLimit()) {
+					if (!cc.getDamageDeclineConfig().isEnabled() && cpsHandler.getCPS(attacker.getUniqueId()) >= cc.getCPSLimit()) {
 						attacker.sendMessage(ChatColor.RED + "You've hit CPS limit of " + cc.getCPSLimit() + "!");
 						return;
 					}
@@ -102,6 +103,16 @@ public class AsyncPacketHandler extends PacketAdapter implements Listener {
 					CombatUtil.attack(attacker, ((CraftLivingEntity) entityTarget).getHandle());
 				}
 			}.runTask(Finale.getPlugin());
+		} else if (packetType == PacketType.Play.Client.ENTITY_ACTION) {
+			Player player = event.getPlayer();
+			PacketContainer packet = event.getPacket();
+			EnumWrappers.PlayerAction playerAction = packet.getPlayerActions().read(0);
+			SprintHandler sprintHandler = Finale.getPlugin().getManager().getSprintHandler();
+			if (playerAction == EnumWrappers.PlayerAction.START_SPRINTING) {
+				sprintHandler.startSprinting(player);
+			} else if (playerAction == EnumWrappers.PlayerAction.STOP_SPRINTING) {
+				sprintHandler.stopSprinting(player);
+			}
 		} else if (packetType == PacketType.Play.Client.ARM_ANIMATION) {
 			Player attacker = event.getPlayer();
 			PacketContainer packet = event.getPacket();

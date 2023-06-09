@@ -45,6 +45,12 @@ public class CombatConfigCommand extends BaseCommand {
 		sender.sendMessage(ChatColor.GREEN + "You have saved the combat config.");
 	}
 
+	@Subcommand("noDamageTicks")
+	public void noDamageTicks(Player sender, int value) {
+		Finale.getPlugin().getManager().getInvulnerableTicks().put(DamageCause.ENTITY_ATTACK, value);
+		sender.sendMessage(ChatColor.GREEN + "Set noDamageTicks to " + value);
+	}
+
 	@Subcommand("set")
 	@Syntax("<property> <value>|[velX] [velY] [velZ]")
 	@Description("Set regular combat config values.")

@@ -4,6 +4,9 @@ import static vg.civcraft.mc.civmodcore.config.ConfigHelper.parseTime;
 
 import java.util.*;
 
+import com.github.maxopoly.finale.combat.DamageDeclineConfig;
+import com.github.maxopoly.finale.combat.knockback.KnockbackStrategy;
+import com.github.maxopoly.finale.combat.knockback.KnockbackStrategyType;
 import com.github.maxopoly.finale.misc.knockback.KnockbackConfig;
 import com.github.maxopoly.finale.misc.knockback.KnockbackModifier;
 import com.github.maxopoly.finale.misc.knockback.KnockbackType;
@@ -436,14 +439,25 @@ public class ConfigParser {
 		double knockbackLevelMultiplier = config.getDouble("knockbackLevelMultiplier", 0.6);
 		int cpsLimit = 9;
 		long cpsCounterInterval = 1000;
+		DamageDeclineConfig damageDeclineConfig = new DamageDeclineConfig(true, 0.1);
 		if (config.isConfigurationSection("cps")) {
 			ConfigurationSection cpsSection = config.getConfigurationSection("cps");
 			cpsLimit = cpsSection.getInt("limit", cpsLimit);
 			cpsCounterInterval = cpsSection.getLong("counterInterval", cpsCounterInterval);
+			if (cpsSection.isConfigurationSection("damageDecline")) {
+				ConfigurationSection damageDeclineSection = cpsSection.getConfigurationSection("damageDecline");
+				boolean damageDeclineEnabled = damageDeclineSection.getBoolean("enabled", true);
+				double damageDeclineFactor = damageDeclineSection.getDouble("factor", 0.1);
+				damageDeclineConfig = new DamageDeclineConfig(damageDeclineEnabled, damageDeclineFactor);
+			}
 		}
+		String knockbackStrategyTypeStr = config.getString("strategy", "normal").toUpperCase();
+		KnockbackStrategyType knockbackStrategyType = KnockbackStrategyType.valueOf(knockbackStrategyTypeStr);
+		KnockbackStrategy knockbackStrategy = knockbackStrategyType.getKnockbackStrategy();
 
-		return new CombatConfig(attackCooldownEnabled, knockbackSwordsEnabled, sprintResetEnabled, waterSprintResetEnabled, cpsLimit, cpsCounterInterval, maxReach, sweepEnabled, combatSounds,
-				knockbackLevelMultiplier, normalConfig, sprintConfig, victimMotion, maxVictimMotion, attackerMotion);
+		return new CombatConfig(attackCooldownEnabled, knockbackSwordsEnabled, sprintResetEnabled, waterSprintResetEnabled,
+				cpsLimit, cpsCounterInterval, damageDeclineConfig, maxReach, sweepEnabled, combatSounds,
+				knockbackLevelMultiplier, normalConfig, sprintConfig, victimMotion, maxVictimMotion, attackerMotion, knockbackStrategy);
 	}
 
 	private KnockbackConfig parseKnockbackConfig(ConfigurationSection config, String name, KnockbackConfig def) {

@@ -10,6 +10,9 @@ cleanerCombat:
   cps:
     limit: 9
     counterInterval: 1000
+    damageDecline:
+      enabled: true # if true, damage declines above the limit, otherwise strict limit
+      factor: 0.1 # -10% damage per cps over the limit
   attackCooldownEnabled: false
   sweepEnabled: false
   sprintResetEnabled: true # should the sprint of the attacker reset upon hitting the victim?
@@ -20,38 +23,39 @@ cleanerCombat:
     strong: false
     knockback: false
     crit: false
-  knockbackLevelMultiplier: 0.6 # a constant to control the knockback sword level
+  knockbackLevelMultiplier: 0.5 # a constant to control the knockback sword level
+  strategy: standard
   normal:
     groundModifier: # modifies knockback in general.
-      type: DIRECT # MULTIPLY or ADD or DIRECT
-      x: 0.625
-      y: 0.5
-      z: 0.625
+      type: MULTIPLY # MULTIPLY or ADD
+      x: 0.1
+      y: 0.05
+      z: 0.1
     airModifier: # modifies knockback if the victim is in the air.
-      type: DIRECT # MULTIPLY or ADD or DIRECT
-      x: 0.625
-      y: 0.5
-      z: 0.625
+      type: MULTIPLY # MULTIPLY or ADD
+      x: 0.1
+      y: 0.1
+      z: 0.1
     waterModifier: # modifies knockback if the victim is in water.
-      type: DIRECT # MULTIPLY or ADD or DIRECT
-      x: 0.625
-      y: 0.5
-      z: 0.625
+      type: MULTIPLY # MULTIPLY or ADD
+      x: 0.1
+      y: 0.05
+      z: 0.1
   sprint: # modifies knockback if the attacker is sprinting.
     groundModifier: # modifies knockback in general.
-      type: DIRECT # MULTIPLY or ADD or DIRECT
+      type: MULTIPLY # MULTIPLY or ADD
       x: 1.0
-      y: 0.6
+      y: 0.05
       z: 1.0
     airModifier: # modifies knockback if the victim is in the air.
-      type: DIRECT
+      type: MULTIPLY
       x: 1.0
-      y: 0.6
+      y: 0.1
       z: 1.0
     waterModifier: # modifies knockback if the victim is in water.
-      type: DIRECT
+      type: MULTIPLY
       x: 1.0
-      y: 0.6
+      y: 0.05
       z: 1.0
   attackerMotion: # modifies motion of attacker upon attacking.
     x: 0.6
@@ -59,7 +63,7 @@ cleanerCombat:
     z: 0.6
   victimMotion: # modifies motion of victim upon getting hit.
     x: 0.5
-    y: 0.5
+    y: 0.1
     z: 0.5
   maxVictimMotion: # maximum motion of victim upon getting hit.
     x: 10.0

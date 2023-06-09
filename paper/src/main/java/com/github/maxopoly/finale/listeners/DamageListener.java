@@ -1,6 +1,9 @@
 package com.github.maxopoly.finale.listeners;
 
 import com.github.maxopoly.finale.Finale;
+import com.github.maxopoly.finale.combat.CPSHandler;
+import com.github.maxopoly.finale.combat.CombatConfig;
+import com.github.maxopoly.finale.combat.DamageDeclineConfig;
 import com.github.maxopoly.finale.combat.event.CritHitEvent;
 import com.github.maxopoly.finale.misc.DamageModificationConfig;
 import java.util.Arrays;
@@ -10,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -89,6 +93,26 @@ public class DamageListener implements Listener {
 				double damage = sharpnessModifier.modify(e.getDamage(), sharpnessLevel);
 				e.setDamage(damage);
 			}
+		}
+
+		CPSHandler cpsHandler = Finale.getPlugin().getManager().getCPSHandler();
+		CombatConfig combatConfig = Finale.getPlugin().getManager().getCombatConfig();
+		DamageDeclineConfig damageDeclineConfig = combatConfig.getDamageDeclineConfig();
+		if (damageDeclineConfig.isEnabled()) {
+			int attackerCPS = cpsHandler.getCPS(attacker.getUniqueId());
+			int cpsLimit = combatConfig.getCPSLimit();
+			if (attackerCPS < cpsLimit) {
+				return;
+			}
+
+			int aboveLimit = attackerCPS - cpsLimit;
+			double declineFactor = damageDeclineConfig.getFactor();
+			declineFactor *= aboveLimit;
+			double damageReduction = (1 - declineFactor) >= 0 ? (1 - declineFactor) : 0;
+			double damage = e.getDamage() * damageReduction;
+			attacker.sendMessage(ChatColor.RED + "You're over the CPS limit of " + cpsLimit + "! (-" + ((int) (declineFactor * 100)) + "%)");
+			attacker.sendMessage("Damage: " + damage);
+			e.setDamage(damage);
 		}
 	}
 

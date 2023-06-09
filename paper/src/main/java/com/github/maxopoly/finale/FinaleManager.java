@@ -4,6 +4,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.github.maxopoly.finale.combat.AsyncPacketHandler;
 import com.github.maxopoly.finale.combat.CPSHandler;
 import com.github.maxopoly.finale.combat.CombatConfig;
+import com.github.maxopoly.finale.combat.SprintHandler;
 import com.github.maxopoly.finale.misc.ArmourModifier;
 import com.github.maxopoly.finale.misc.SaturationHealthRegenHandler;
 import com.github.maxopoly.finale.misc.WeaponModifier;
@@ -26,7 +27,8 @@ public class FinaleManager {
 	private PotionHandler potionHandler;
 	private boolean invulTicksEnabled;
 	private Map<EntityDamageEvent.DamageCause, Integer> invulnerableTicks;
-	
+
+	private SprintHandler sprintHandler;
 	private CPSHandler cpsHandler;
 	private CombatConfig combatConfig;
 	private AsyncPacketHandler combatHandler;
@@ -47,6 +49,7 @@ public class FinaleManager {
 		this.ctpOnLogin = ctpOnLogin;
 		
 		this.cpsHandler = new CPSHandler();
+		this.sprintHandler = new SprintHandler();
 
 		Bukkit.getScheduler().runTaskAsynchronously(Finale.getPlugin(), () -> ProtocolLibrary.getProtocolManager().getAsynchronousManager().registerAsyncHandler(combatHandler = new AsyncPacketHandler(combatConfig)).start());
 	}
@@ -74,7 +77,11 @@ public class FinaleManager {
 	public SaturationHealthRegenHandler getPassiveRegenHandler() {
 		return regenHandler;
 	}
-	
+
+	public SprintHandler getSprintHandler() {
+		return sprintHandler;
+	}
+
 	public CPSHandler getCPSHandler() {
 		return cpsHandler;
 	}
