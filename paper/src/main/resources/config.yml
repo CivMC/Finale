@@ -44,19 +44,19 @@ cleanerCombat:
   sprint: # modifies knockback if the attacker is sprinting.
     groundModifier: # modifies knockback in general.
       type: MULTIPLY # MULTIPLY or ADD
-      x: 1.0
+      x: 0.9
       y: 0.05
-      z: 1.0
+      z: 0.9
     airModifier: # modifies knockback if the victim is in the air.
       type: MULTIPLY
-      x: 1.0
+      x: 0.9
       y: 0.1
-      z: 1.0
+      z: 0.9
     waterModifier: # modifies knockback if the victim is in water.
       type: MULTIPLY
-      x: 1.0
+      x: 0.9
       y: 0.05
-      z: 1.0
+      z: 0.9
   attackerMotion: # modifies motion of attacker upon attacking.
     x: 0.6
     y: 1.0
@@ -278,3 +278,16 @@ invulnerableTicks:
   POISON: 1
   PROJECTILE: 1
   ENTITY_ATTACK: 10
+
+# the warp fruit will roll back to 7 seconds ago
+warpFruit: # logSize * logInterval = how far back in time you go
+  logSize: 35 # log queue size
+  logInterval: 200ms # in milliseconds
+  cooldown: 10s
+  maxDistance: 100 # max warp distance
+  spectralWhileChanneling: true
+  afterEffects:
+    slowness:
+      type: SLOW
+      amplifier: 0
+      duration: 40

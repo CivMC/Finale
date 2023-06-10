@@ -10,6 +10,7 @@ import com.github.maxopoly.finale.combat.knockback.KnockbackStrategyType;
 import com.github.maxopoly.finale.misc.knockback.KnockbackConfig;
 import com.github.maxopoly.finale.misc.knockback.KnockbackModifier;
 import com.github.maxopoly.finale.misc.knockback.KnockbackType;
+import com.github.maxopoly.finale.misc.warpfruit.WarpFruitTracker;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,6 +18,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import com.github.maxopoly.finale.combat.CombatConfig;
@@ -129,9 +132,27 @@ public class ConfigParser {
 		damageModifiers = parseDamageModifiers(config.getConfigurationSection("damageModifiers"));
 		combatConfig = parseCombatConfig(config.getConfigurationSection("cleanerCombat"));
 
+		int warpFruitLogSize = config.getInt("warpFruit.logSize");
+		long warpFruitLogInterval = parseTime(config.getString("warpFruit.logInterval", "1s"));
+		long warpFruitCooldown = parseTime(config.getString("warpFruit.cooldown", "10s"));
+		double warpFruitMaxDistance = config.getDouble("warpFruit.maxDistance", 100);
+		boolean warpFruitSpectralWhileChanneling = config.getBoolean("warpFruit.spectralWhileChanneling", true);
+		List<PotionEffect> afterEffects = new ArrayList<>();
+		ConfigurationSection afterEffectsSection = config.getConfigurationSection("warpFruit.afterEffects");
+		for (String key : afterEffectsSection.getKeys(false)) {
+			ConfigurationSection afterEffectSection = afterEffectsSection.getConfigurationSection(key);
+			String potionEffectTypeStr = afterEffectSection.getString("type");
+			PotionEffectType potionEffectType = PotionEffectType.getByName(potionEffectTypeStr.toUpperCase());
+			int amplifier = afterEffectSection.getInt("amplifier");
+			int duration = afterEffectSection.getInt("duration");
+			PotionEffect effect = new PotionEffect(potionEffectType, duration, amplifier);
+			afterEffects.add(effect);
+		}
+		WarpFruitTracker warpFruitTracker = new WarpFruitTracker(warpFruitLogSize, warpFruitLogInterval, warpFruitCooldown, warpFruitMaxDistance, warpFruitSpectralWhileChanneling, afterEffects);
+
 		// Initialize the manager
 		manager = new FinaleManager(debug, attackEnabled, attackSpeed,invulTicksEnabled, invulnerableTicks, regenEnabled, ctpOnLogin, regenhandler, weapMod, armourMod,
-				potionHandler, combatConfig);
+				potionHandler, combatConfig, warpFruitTracker);
 		plugin.info("Successfully parsed config");
 		return manager;
 	}

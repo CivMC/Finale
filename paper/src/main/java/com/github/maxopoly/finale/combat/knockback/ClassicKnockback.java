@@ -20,7 +20,7 @@ public class ClassicKnockback implements KnockbackStrategy {
 		CombatConfig config = Finale.getPlugin().getManager().getCombatConfig();
 		SprintHandler sprintHandler = Finale.getPlugin().getManager().getSprintHandler();
 
-		KnockbackConfig knockbackConfig = sprintHandler.isSprinting(attacker) ? config.getSprintConfig() : config.getNormalConfig();
+		KnockbackConfig knockbackConfig = (knockbackLevel > 0) ? config.getSprintConfig() : config.getNormalConfig();
 		KnockbackModifier modifier = knockbackConfig.getGroundModifier();
 
 		if (!entity.isOnGround()) {

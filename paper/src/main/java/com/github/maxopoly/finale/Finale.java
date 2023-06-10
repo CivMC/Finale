@@ -17,6 +17,7 @@ import com.github.maxopoly.finale.listeners.PlayerListener;
 import com.github.maxopoly.finale.listeners.PotionListener;
 import com.github.maxopoly.finale.listeners.ToolProtectionListener;
 import com.github.maxopoly.finale.listeners.VelocityFixListener;
+import com.github.maxopoly.finale.listeners.WarpFruitListener;
 import com.github.maxopoly.finale.listeners.WeaponModificationListener;
 import com.github.maxopoly.finale.overlay.ScoreboardHUD;
 import org.bukkit.Bukkit;
@@ -91,6 +92,7 @@ public class Finale extends ACivMod {
 		if (config.isItemCDEnabled()) {
 			Bukkit.getPluginManager().registerEvents(new GappleCooldownListener(config.getItemCooldown()), this);
 		}
+		Bukkit.getPluginManager().registerEvents(new WarpFruitListener(), this);
 		Bukkit.getPluginManager().registerEvents(new WeaponModificationListener(), this);
 		Bukkit.getPluginManager().registerEvents(new ExtraDurabilityListener(), this);
 		Bukkit.getPluginManager().registerEvents(new EnchantmentDisableListener(config.getDisabledEnchants()), this);
@@ -99,6 +101,7 @@ public class Finale extends ACivMod {
 		Bukkit.getPluginManager().registerEvents(new DamageListener(config.getDamageModifiers()), this);
 		Bukkit.getPluginManager().registerEvents(new ScoreboardHUD(settingsManager), this);
 		Bukkit.getPluginManager().registerEvents(new ToolProtectionListener(settingsManager), this);
+
 	}
 
 	private void registerCommands() {

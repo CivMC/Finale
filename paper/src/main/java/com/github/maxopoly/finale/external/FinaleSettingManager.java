@@ -13,6 +13,10 @@ import vg.civcraft.mc.civmodcore.players.settings.impl.IntegerSetting;
 
 public class FinaleSettingManager {
 
+	private BooleanSetting vanillaTimeWarpCooldown;
+	private BooleanSetting actionBarTimeWarpCooldown;
+	private BooleanSetting sideBarTimeWarpCooldown;
+
 	private BooleanSetting vanillaPearlCooldown;
 	private BooleanSetting vanillaItemCooldown;
 	private BooleanSetting actionBarItemCooldown;
@@ -40,6 +44,21 @@ public class FinaleSettingManager {
 				"finaleGammaBright",
 				"Do you want permanent night vision");
 		PlayerSettingAPI.registerSetting(permanentNightVision, menu);
+
+		vanillaTimeWarpCooldown = new BooleanSetting(plugin, false, "Use vanilla timewarp cooldown",
+			"finaleVanillaTimewarpCooldown",
+			"Should timewarp cooldown be shown as an overlay on the item, the way it is done in vanilla");
+		PlayerSettingAPI.registerSetting(vanillaTimeWarpCooldown, menu);
+
+		actionBarTimeWarpCooldown = new BooleanSetting(plugin, true, "Show timewarp cooldown on action bar",
+			"finaleActionBarTimewarpCooldown",
+			"Should timewarp cooldown be shown on the action bar at the bottom of your screen");
+		PlayerSettingAPI.registerSetting(actionBarTimeWarpCooldown, menu);
+
+		sideBarTimeWarpCooldown = new BooleanSetting(plugin, false, "Show timewarp cooldown in side bar",
+			"finaleSideBarTimewarpCooldown",
+			"Should timewarp cooldown be shown on the sidebar");
+		PlayerSettingAPI.registerSetting(sideBarTimeWarpCooldown, menu);
 
 		vanillaPearlCooldown = new BooleanSetting(plugin, false, "Use vanilla pearl cooldown",
 				"finaleVanillaPearlCooldown",
@@ -96,6 +115,18 @@ public class FinaleSettingManager {
 
 	public boolean setVanillaItemCooldown(UUID uuid) {
 		return vanillaItemCooldown.getValue(uuid);
+	}
+
+	public boolean vanillaTimewarpCooldown(UUID uuid) {
+		return vanillaTimeWarpCooldown.getValue(uuid);
+	}
+
+	public boolean sideBarTimewarpCooldown(UUID uuid) {
+		return sideBarTimeWarpCooldown.getValue(uuid);
+	}
+
+	public boolean actionBarTimewarpCooldown(UUID uuid) {
+		return actionBarTimeWarpCooldown.getValue(uuid);
 	}
 
 	public int getToolProtectionThreshhold(UUID uuid) {

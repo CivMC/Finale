@@ -8,6 +8,7 @@ import com.github.maxopoly.finale.combat.SprintHandler;
 import com.github.maxopoly.finale.misc.ArmourModifier;
 import com.github.maxopoly.finale.misc.SaturationHealthRegenHandler;
 import com.github.maxopoly.finale.misc.WeaponModifier;
+import com.github.maxopoly.finale.misc.warpfruit.WarpFruitTracker;
 import com.github.maxopoly.finale.potion.PotionHandler;
 import java.util.Map;
 
@@ -25,8 +26,12 @@ public class FinaleManager {
 	private WeaponModifier weaponModifier;
 	private ArmourModifier armourModifier;
 	private PotionHandler potionHandler;
+
+
 	private boolean invulTicksEnabled;
 	private Map<EntityDamageEvent.DamageCause, Integer> invulnerableTicks;
+
+	private WarpFruitTracker warpFruitTracker;
 
 	private SprintHandler sprintHandler;
 	private CPSHandler cpsHandler;
@@ -34,7 +39,7 @@ public class FinaleManager {
 	private AsyncPacketHandler combatHandler;
 
 	public FinaleManager(boolean debug, boolean attackSpeedEnabled, double attackSpeed, boolean invulTicksEnabled, Map<EntityDamageEvent.DamageCause, Integer> invulnerableTicks, boolean regenHandlerEnabled,
-			boolean ctpOnLogin, SaturationHealthRegenHandler regenHandler, WeaponModifier weaponModifier, ArmourModifier armourModifier, PotionHandler potionHandler, CombatConfig combatConfig) {
+			boolean ctpOnLogin, SaturationHealthRegenHandler regenHandler, WeaponModifier weaponModifier, ArmourModifier armourModifier, PotionHandler potionHandler, CombatConfig combatConfig, WarpFruitTracker warpFruitTracker) {
 		this.debug = debug;
 		this.attackSpeedEnabled = attackSpeedEnabled;
 		this.attackSpeed = attackSpeed;
@@ -47,6 +52,8 @@ public class FinaleManager {
 		this.invulTicksEnabled = invulTicksEnabled;
 		this.invulnerableTicks = invulnerableTicks;
 		this.ctpOnLogin = ctpOnLogin;
+
+		this.warpFruitTracker = warpFruitTracker;
 		
 		this.cpsHandler = new CPSHandler();
 		this.sprintHandler = new SprintHandler();
@@ -112,5 +119,9 @@ public class FinaleManager {
 
 	public boolean isRegenHandlerEnabled() {
 		return regenHandlerEnabled;
+	}
+
+	public WarpFruitTracker getWarpFruitTracker() {
+		return warpFruitTracker;
 	}
 }
