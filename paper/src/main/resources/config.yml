@@ -24,7 +24,7 @@ cleanerCombat:
     knockback: false
     crit: false
   knockbackLevelMultiplier: 0.5 # a constant to control the knockback sword level
-  strategy: standard
+  strategy: classic
   normal:
     groundModifier: # modifies knockback in general.
       type: MULTIPLY # MULTIPLY or ADD
