@@ -16,7 +16,7 @@ import org.bukkit.util.Vector;
 public class ClassicKnockback implements KnockbackStrategy {
 
 	@Override
-	public void handleKnockback(Player attacker, Entity entity, int knockbackLevel) {
+	public void handleKnockback(Player attacker, Entity entity, float knockbackLevel) {
 		CombatConfig config = Finale.getPlugin().getManager().getCombatConfig();
 		SprintHandler sprintHandler = Finale.getPlugin().getManager().getSprintHandler();
 

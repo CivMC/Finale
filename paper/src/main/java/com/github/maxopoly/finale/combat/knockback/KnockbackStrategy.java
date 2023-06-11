@@ -5,6 +5,6 @@ import net.minecraft.world.entity.player.Player;
 
 public interface KnockbackStrategy {
 
-	void handleKnockback(Player attacker, Entity victim, int knockbackLevel);
+	void handleKnockback(Player attacker, Entity victim, float knockbackLevel);
 
 }

@@ -74,15 +74,17 @@ public class CombatUtil {
 			if (damage > 0.0F || f1 > 0.0F) {
 				boolean dealtExtraKnockback = false;
 				byte baseKnockbackLevel = 0;
-				int knockbackLevel = baseKnockbackLevel + EnchantmentHelper.getKnockbackBonus(attacker);
+				float knockbackLevel = baseKnockbackLevel;
+
+				if (config.isKnockbackSwordsEnabled()) {
+					knockbackLevel += config.getKnockbackLevelMultiplier() * EnchantmentHelper.getKnockbackBonus(attacker);
+				}
 
 				if (sprintHandler.isSprinting(attacker) && shouldKnockback) {
 					if (config.getCombatSounds().isKnockbackEnabled()) {
 						sendSoundEffect(attacker, attacker.getX(), attacker.getY(), attacker.getZ(), SoundEvents.PLAYER_ATTACK_WEAK, attacker.getSoundSource(), 1.0F, 1.0F); // Paper - send while respecting visibility
 					}
-					if (!config.isKnockbackSwordsEnabled()) {
-						++knockbackLevel;
-					}
+					++knockbackLevel;
 					dealtExtraKnockback = true;
 				}
 
