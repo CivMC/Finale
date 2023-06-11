@@ -111,7 +111,6 @@ public class DamageListener implements Listener {
 			double damageReduction = (1 - declineFactor) >= 0 ? (1 - declineFactor) : 0;
 			double damage = e.getDamage() * damageReduction;
 			attacker.sendMessage(ChatColor.RED + "You're over the CPS limit of " + cpsLimit + "! (-" + ((int) (declineFactor * 100)) + "%)");
-			attacker.sendMessage("Damage: " + damage);
 			e.setDamage(damage);
 		}
 	}
