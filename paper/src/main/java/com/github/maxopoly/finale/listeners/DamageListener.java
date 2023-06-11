@@ -105,7 +105,7 @@ public class DamageListener implements Listener {
 				return;
 			}
 
-			int aboveLimit = attackerCPS - cpsLimit;
+			int aboveLimit = 1 + (attackerCPS - cpsLimit);
 			double declineFactor = damageDeclineConfig.getFactor();
 			declineFactor *= aboveLimit;
 			double damageReduction = (1 - declineFactor) >= 0 ? (1 - declineFactor) : 0;
